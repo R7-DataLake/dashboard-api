@@ -1,6 +1,8 @@
 import fastify from 'fastify'
-import path, { join } from 'path';
+import path, { join } from 'path'
+
 const autoload = require('@fastify/autoload')
+const helmet = require('@fastify/helmet')
 
 require('dotenv').config({ path: join(__dirname, '../config.conf') })
 
@@ -29,6 +31,19 @@ app.register(import('@fastify/rate-limit'), {
   global: false,
   max: 100,
   timeWindow: '1 minute'
+})
+
+app.register(
+  helmet,
+  { contentSecurityPolicy: false }
+)
+
+app.addHook('onSend', (request: any, reply: any, playload: any, next: any) => {
+  reply.headers({
+    'X-Powered-By': 'R7 Health Platform - DASHBOARD',
+    'X-Processed-By': process.env.R7_DASHBOARD_SERVICE_HOSTNAME || 'dummy-server',
+  })
+  next()
 })
 
 // Database
@@ -74,15 +89,25 @@ app.register(require('./plugins/jwt'), {
 // Axios
 app.register(require('fastify-axios'), {
   clients: {
-    httpbin: {
-      baseURL: 'https://httpbin.org',
+    nhso7: {
+      baseURL: 'https://khonkaen2.nhso.go.th/api.php',
       headers: {
-        'Authorization': 'Bearer ' + process.env.API_TOKEN
+        'Authorization': 'Bearer ' + process.env.R7_DASHBOARD_NHSO7_TOKEN
       }
     },
-    randomuser: {
-      baseURL: 'https://randomuser.me/api'
-    }
+    cockpit: {
+      baseURL: 'https://r7.moph.go.th/cpreg7/api',
+      headers: {
+        'Authorization': 'Bearer ' + process.env.R7_DASHBOARD_COCKPIT_TOKEN
+      }
+    },
+    hdc: {
+      baseURL: 'http://127.0.0.1:3000',
+      headers: {
+        'Authorization': 'Bearer ' + process.env.R7_DASHBOARD_HDC_TOKEN
+      }
+    },
+
   }
 })
 
