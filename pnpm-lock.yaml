@@ -21,6 +21,7 @@ specifiers:
   gulp-sourcemaps: ^3.0.0
   gulp-typescript: 6.0.0-alpha.1
   gulp-uglify: ^3.0.2
+  http-status-codes: ^2.2.0
   knex: ^2.4.0
   nodemon: ^2.0.20
   pg: ^8.8.0
@@ -43,6 +44,7 @@ dependencies:
   fastify-axios: 1.2.6_typescript@4.9.4
   fastify-plugin: 4.5.0
   fluent-json-schema: 4.0.0
+  http-status-codes: 2.2.0
   knex: 2.4.0_pg@8.8.0
   pg: 8.8.0
   pino: 8.8.0
@@ -2180,6 +2182,10 @@ packages:
 
   /html-escaper/2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
+    dev: false
+
+  /http-status-codes/2.2.0:
+    resolution: {integrity: sha512-feERVo9iWxvnejp3SEfm/+oNG517npqL2/PIA8ORjyOZjGC7TwCRQsZylciLS64i6pJ0wRYz3rkXLRwbtFa8Ng==}
     dev: false
 
   /ieee754/1.2.1:

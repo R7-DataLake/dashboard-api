@@ -1,4 +1,10 @@
+import { AxiosResponse } from "axios";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { request } from "http";
+import {
+  StatusCodes,
+  getReasonPhrase
+} from 'http-status-codes';
 
 export default async (fastify: FastifyInstance) => {
 
@@ -9,12 +15,49 @@ export default async (fastify: FastifyInstance) => {
         timeWindow: '1 minute'
       }
     }
-  }, async (_request: FastifyRequest, reply: FastifyReply) => {
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      reply.status(200).send()
-    } catch (e) {
-      reply.status(500).send()
+      reply
+        .status(StatusCodes.OK)
+        .send(getReasonPhrase(StatusCodes.OK))
+    } catch (error) {
+      request.log.error(error)
+      reply
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR))
     }
   })
+
+  fastify.get('/cockpit/health-check', {
+    onRequest: [fastify.authenticate]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      await fastify.axios.cockpit.get('/health-check')
+      reply
+        .status(StatusCodes.OK)
+        .send(getReasonPhrase(StatusCodes.OK))
+    } catch (error) {
+      reply
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR))
+    }
+  })
+
+  fastify.get('/nhso7/health-check', {
+    onRequest: [fastify.authenticate]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      await fastify.axios.nhso7.get('/health-check')
+      reply
+        .status(StatusCodes.OK)
+        .send(getReasonPhrase(StatusCodes.OK))
+    } catch (error) {
+      request.log.error(error)
+      reply
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR))
+    }
+  })
+
 
 } 
